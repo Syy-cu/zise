@@ -186,4 +186,215 @@
 .st-tc-scheme-title {
     font-size: 12px;
     font-weight: 600;
-    color: rgba(255, 255, 2
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: 8px;
+}
+
+.st-tc-save-row {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.st-tc-scheme-input {
+    flex: 1;
+    min-width: 0;
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 7px;
+    color: #ffffff;
+    font-size: 12px;
+    padding: 6px 9px;
+    outline: none;
+    font-family: inherit;
+}
+
+.st-tc-scheme-input:focus {
+    border-color: rgba(255, 255, 255, 0.45);
+}
+
+.st-tc-scheme-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 175px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.st-tc-scheme-empty {
+    font-size: 11.5px;
+    color: rgba(255, 255, 255, 0.45);
+    text-align: center;
+    padding: 8px 0;
+}
+
+.st-tc-scheme-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-left: 3px solid transparent;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, transform 0.1s;
+}
+
+.st-tc-scheme-item:hover {
+    background: rgba(255, 255, 255, 0.11);
+    border-color: rgba(255, 255, 255, 0.22);
+}
+
+.st-tc-scheme-item:active {
+    transform: scale(0.985);
+}
+
+.st-tc-scheme-item.st-tc-scheme-active {
+    background: rgba(16, 185, 129, 0.16);
+    border-color: rgba(110, 231, 183, 0.35);
+    border-left: 3px solid #6ee7b7;
+}
+
+.st-tc-scheme-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    flex: 1;
+}
+
+.st-tc-scheme-name {
+    font-size: 12.5px;
+    color: #ffffff;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.st-tc-dots {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    flex-shrink: 0;
+}
+
+.st-tc-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+.st-tc-scheme-right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.st-tc-scheme-badge {
+    font-size: 10.5px;
+    padding: 2px 6px;
+    border-radius: 999px;
+    background: rgba(16, 185, 129, 0.28);
+    color: #a7f3d0;
+    border: 1px solid rgba(110, 231, 183, 0.45);
+    font-weight: 500;
+}
+
+.st-tc-scheme-switch {
+    font-size: 10.5px;
+    padding: 2px 6px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.65);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.st-tc-scheme-item:hover .st-tc-scheme-switch {
+    background: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+}
+
+/* 极小防手滑删除键 */
+.st-tc-scheme-del {
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    line-height: 1;
+    border-radius: 50%;
+    border: 1px solid transparent;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.38);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.st-tc-scheme-del:hover {
+    background: rgba(235, 85, 85, 0.25);
+    border-color: rgba(235, 85, 85, 0.5);
+    color: #ffb3b3;
+}
+
+/* 按钮 */
+.st-tc-btn {
+    padding: 4px 9px;
+    font-size: 11.5px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s;
+}
+
+.st-tc-btn:hover {
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.st-tc-btn.st-tc-on {
+    background: rgba(16, 185, 129, 0.22);
+    border-color: rgba(110, 231, 183, 0.45);
+    color: #a7f3d0;
+}
+
+.st-tc-btn-primary {
+    background: rgba(255, 255, 255, 0.88);
+    color: #0e0f14;
+    border-color: #ffffff;
+    font-weight: 600;
+}
+
+.st-tc-btn-primary:hover {
+    background: #ffffff;
+}
+
+.st-tc-close {
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+
+@media (max-width: 768px) {
+    #st-tc-panel {
+        top: 48px;
+        right: 12px;
+        left: 12px;
+        width: auto;
+        max-width: none;
+    }
+}
