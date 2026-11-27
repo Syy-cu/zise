@@ -27,7 +27,9 @@
 
     const defaultSettings = {
         enabled: true,
-        ...PRESETS.darkBg
+        ...PRESETS.darkBg,
+        activeSchemeId: "",
+        schemes: []
     };
 
     const COLOR_ITEMS = [
@@ -38,13 +40,27 @@
         { key: "name", label: "角色名称", sub: "消息顶部名字" }
     ];
 
+    function escapeHtml(str) {
+        const amp = String.fromCharCode(38);
+        return String(str || "")
+            .replace(/&/g, amp + "amp;")
+            .replace(/</g, amp + "lt;")
+            .replace(/>/g, amp + "gt;")
+            .replace(/"/g, amp + "quot;");
+    }
+
     function loadSettings() {
         try {
             const raw = localStorage.getItem(STORAGE_KEY);
-            if (!raw) return { ...defaultSettings };
-            return { ...defaultSettings, ...JSON.parse(raw) };
+            if (!raw) return { ...defaultSettings, schemes: [] };
+            const parsed = JSON.parse(raw);
+            return {
+                ...defaultSettings,
+                ...parsed,
+                schemes: Array.isArray(parsed.schemes) ? parsed.schemes : []
+            };
         } catch (e) {
-            return { ...defaultSettings };
+            return { ...defaultSettings, schemes: [] };
         }
     }
 
@@ -147,6 +163,14 @@
                     <span>文字微阴影（全透背景防看不清）</span>
                     <input type="checkbox" id="st-tc-shadow" ${settings.shadow ? "checked" : ""} />
                 </label>
+                <div class="st-tc-scheme-box">
+                    <div class="st-tc-scheme-title">我的配色方案</div>
+                    <div class="st-tc-save-row">
+                        <input type="text" id="st-tc-scheme-input" class="st-tc-scheme-input" placeholder="给当前配色起个名字..." maxlength="24" />
+                        <button type="button" id="st-tc-save-scheme" class="st-tc-btn st-tc-btn-primary">保存</button>
+                    </div>
+                    <div id="st-tc-scheme-list" class="st-tc-scheme-list"></div>
+                </div>
             </div>
         `;
         document.body.appendChild(panel);
@@ -154,6 +178,9 @@
         const toggleBtn = document.getElementById("st-tc-toggle");
         const closeBtn = document.getElementById("st-tc-close");
         const shadowInput = document.getElementById("st-tc-shadow");
+        const schemeInput = document.getElementById("st-tc-scheme-input");
+        const saveSchemeBtn = document.getElementById("st-tc-save-scheme");
+        const schemeListEl = document.getElementById("st-tc-scheme-list");
 
         function syncInputsFromSettings() {
             toggleBtn.textContent = settings.enabled ? "已开启" : "已关闭";
@@ -167,6 +194,101 @@
                 if (colEl) colEl.value = settings[item.key];
             });
         }
+
+        function renderSchemeList() {
+            if (!settings.schemes || settings.schemes.length === 0) {
+                schemeListEl.innerHTML = `<div class="st-tc-scheme-empty">暂无已存方案，调好颜色后在上方起名保存即可</div>`;
+                return;
+            }
+
+            schemeListEl.innerHTML = settings.schemes.map(sc => {
+                const isActive = sc.id === settings.activeSchemeId;
+                const c = sc.colors || {};
+                return `
+                    <div class="st-tc-scheme-item ${isActive ? "st-tc-scheme-active" : ""}" data-id="${escapeHtml(sc.id)}">
+                        <div class="st-tc-scheme-info">
+                            <div class="st-tc-dots">
+                                <span class="st-tc-dot" style="background:${escapeHtml(c.body || "#ffffff")};"></span>
+                                <span class="st-tc-dot" style="background:${escapeHtml(c.quote || "#ffd68a")};"></span>
+                                <span class="st-tc-dot" style="background:${escapeHtml(c.strong || "#ff9e9e")};"></span>
+                                <span class="st-tc-dot" style="background:${escapeHtml(c.italic || "#b8c7d9")};"></span>
+                            </div>
+                            <span class="st-tc-scheme-name">${isActive ? "▸ " : ""}${escapeHtml(sc.title)}</span>
+                        </div>
+                        <button type="button" class="st-tc-scheme-del" data-id="${escapeHtml(sc.id)}">删除</button>
+                    </div>
+                `;
+            }).join("");
+
+            schemeListEl.querySelectorAll(".st-tc-scheme-item").forEach(itemEl => {
+                itemEl.addEventListener("click", (e) => {
+                    if (e.target.closest(".st-tc-scheme-del")) return;
+                    const id = itemEl.getAttribute("data-id");
+                    const target = settings.schemes.find(s => s.id === id);
+                    if (!target || !target.colors) return;
+
+                    settings = {
+                        ...settings,
+                        enabled: true,
+                        ...target.colors,
+                        activeSchemeId: target.id
+                    };
+                    saveSettings(settings);
+                    applyTextColors();
+                    syncInputsFromSettings();
+                    renderSchemeList();
+                });
+            });
+
+            schemeListEl.querySelectorAll(".st-tc-scheme-del").forEach(delBtn => {
+                delBtn.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    const id = delBtn.getAttribute("data-id");
+                    settings.schemes = settings.schemes.filter(s => s.id !== id);
+                    if (settings.activeSchemeId === id) {
+                        settings.activeSchemeId = "";
+                    }
+                    saveSettings(settings);
+                    renderSchemeList();
+                });
+            });
+        }
+
+        function handleSaveScheme() {
+            const title = (schemeInput.value || "").trim() || `方案 ${settings.schemes.length + 1}`;
+            const colorsSnapshot = {
+                body: settings.body,
+                quote: settings.quote,
+                strong: settings.strong,
+                italic: settings.italic,
+                name: settings.name,
+                shadow: settings.shadow,
+                shadowType: settings.shadowType
+            };
+
+            const existing = settings.schemes.find(s => s.title === title);
+            if (existing) {
+                existing.colors = colorsSnapshot;
+                settings.activeSchemeId = existing.id;
+            } else {
+                const newScheme = {
+                    id: "scheme_" + Date.now() + "_" + Math.floor(Math.random() * 1000),
+                    title,
+                    colors: colorsSnapshot
+                };
+                settings.schemes.unshift(newScheme);
+                settings.activeSchemeId = newScheme.id;
+            }
+
+            schemeInput.value = "";
+            saveSettings(settings);
+            renderSchemeList();
+        }
+
+        saveSchemeBtn.addEventListener("click", handleSaveScheme);
+        schemeInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") handleSaveScheme();
+        });
 
         toggleBtn.addEventListener("click", () => {
             settings.enabled = !settings.enabled;
@@ -182,24 +304,32 @@
         });
 
         document.getElementById("st-tc-preset-dark").addEventListener("click", () => {
-            settings = { ...settings, enabled: true, ...PRESETS.darkBg };
+            settings = { ...settings, enabled: true, ...PRESETS.darkBg, activeSchemeId: "" };
             saveSettings(settings);
             applyTextColors();
             syncInputsFromSettings();
+            renderSchemeList();
         });
 
         document.getElementById("st-tc-preset-light").addEventListener("click", () => {
-            settings = { ...settings, enabled: true, ...PRESETS.lightBg };
+            settings = { ...settings, enabled: true, ...PRESETS.lightBg, activeSchemeId: "" };
             saveSettings(settings);
             applyTextColors();
             syncInputsFromSettings();
+            renderSchemeList();
         });
 
         document.getElementById("st-tc-reset").addEventListener("click", () => {
-            settings = { ...defaultSettings };
+            settings = {
+                ...settings,
+                enabled: true,
+                ...PRESETS.darkBg,
+                activeSchemeId: ""
+            };
             saveSettings(settings);
             applyTextColors();
             syncInputsFromSettings();
+            renderSchemeList();
         });
 
         shadowInput.addEventListener("change", (e) => {
@@ -241,6 +371,8 @@
                 }
             });
         });
+
+        renderSchemeList();
     }
 
     function injectTopNavButton() {
