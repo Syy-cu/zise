@@ -164,7 +164,7 @@
                     <input type="checkbox" id="st-tc-shadow" ${settings.shadow ? "checked" : ""} />
                 </label>
                 <div class="st-tc-scheme-box">
-                    <div class="st-tc-scheme-title">我的配色方案</div>
+                    <div class="st-tc-scheme-title">我的配色方案（点击即可切换）</div>
                     <div class="st-tc-save-row">
                         <input type="text" id="st-tc-scheme-input" class="st-tc-scheme-input" placeholder="给当前配色起个名字..." maxlength="24" />
                         <button type="button" id="st-tc-save-scheme" class="st-tc-btn st-tc-btn-primary">保存</button>
@@ -213,9 +213,15 @@
                                 <span class="st-tc-dot" style="background:${escapeHtml(c.strong || "#ff9e9e")};"></span>
                                 <span class="st-tc-dot" style="background:${escapeHtml(c.italic || "#b8c7d9")};"></span>
                             </div>
-                            <span class="st-tc-scheme-name">${isActive ? "▸ " : ""}${escapeHtml(sc.title)}</span>
+                            <span class="st-tc-scheme-name">${escapeHtml(sc.title)}</span>
                         </div>
-                        <button type="button" class="st-tc-scheme-del" data-id="${escapeHtml(sc.id)}">删除</button>
+                        <div class="st-tc-scheme-right">
+                            ${isActive
+                                ? `<span class="st-tc-scheme-badge">✓ 使用中</span>`
+                                : `<span class="st-tc-scheme-switch">切换</span>`
+                            }
+                            <button type="button" class="st-tc-scheme-del" data-id="${escapeHtml(sc.id)}" title="删除方案">×</button>
+                        </div>
                     </div>
                 `;
             }).join("");
@@ -244,6 +250,10 @@
                 delBtn.addEventListener("click", (e) => {
                     e.stopPropagation();
                     const id = delBtn.getAttribute("data-id");
+                    const target = settings.schemes.find(s => s.id === id);
+                    const name = target ? target.title : "该方案";
+                    if (!confirm(`确定要删除配色方案「${name}」吗？`)) return;
+
                     settings.schemes = settings.schemes.filter(s => s.id !== id);
                     if (settings.activeSchemeId === id) {
                         settings.activeSchemeId = "";
