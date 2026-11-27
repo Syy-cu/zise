@@ -28,11 +28,11 @@
     position: fixed;
     top: 52px;
     right: 16px;
-    width: 310px;
+    width: 320px;
     max-width: calc(100vw - 24px);
     max-height: calc(100dvh - 70px);
     z-index: 99995;
-    background: rgba(18, 19, 24, 0.9);
+    background: rgba(18, 19, 24, 0.92);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border: 1px solid rgba(255, 255, 255, 0.15);
@@ -174,45 +174,16 @@
     user-select: none;
 }
 
-/* 按钮 */
-.st-tc-btn {
-    padding: 4px 9px;
-    font-size: 11.5px;
-    border-radius: 6px;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    background: rgba(255, 255, 255, 0.08);
-    color: #ffffff;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: background 0.15s;
+/* =========================================
+   自定义方案列表区
+   ========================================= */
+.st-tc-scheme-box {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.st-tc-btn:hover {
-    background: rgba(255, 255, 255, 0.18);
-}
-
-.st-tc-btn.st-tc-on {
-    background: rgba(16, 185, 129, 0.22);
-    border-color: rgba(110, 231, 183, 0.45);
-    color: #a7f3d0;
-}
-
-.st-tc-close {
-    width: 26px;
-    height: 26px;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-}
-
-@media (max-width: 768px) {
-    #st-tc-panel {
-        top: 48px;
-        right: 12px;
-        left: 12px;
-        width: auto;
-        max-width: none;
-    }
-}
+.st-tc-scheme-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255, 255, 2
